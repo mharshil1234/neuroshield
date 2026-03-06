@@ -1,0 +1,21 @@
+# Node
+node_modules
+npm-debug.log
+
+# Environment variables
+.env
+.env.local
+
+# Build outputs
+dist
+build
+.plasmo
+.next
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
