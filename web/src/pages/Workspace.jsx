@@ -139,10 +139,16 @@ export default function Workspace() {
         <button className="w-[42px] h-[42px] rounded-full bg-[#A3C0AB] flex items-center justify-center text-white transition-colors cursor-pointer shadow-sm">
           <Home className="w-5 h-5" fill="currentColor" />
         </button>
-        <button className="w-[42px] h-[42px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer">
+        <button
+          onClick={() => navigate('/progress')}
+          className="w-[42px] h-[42px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer"
+        >
           <Calendar className="w-5 h-5" />
         </button>
-        <button className="w-[42px] h-[42px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer">
+        <button
+          onClick={() => navigate('/compass')}
+          className="w-[42px] h-[42px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer"
+        >
           <BarChart2 className="w-5 h-5" />
         </button>
         <button className="w-[42px] h-[42px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer">

@@ -8,6 +8,8 @@ import SetupQ3 from './pages/SetupQ3.jsx'
 import ReadyPage from './pages/ReadyPage.jsx'
 import Workspace from './pages/Workspace.jsx'
 import FocusSession from './pages/FocusSession.jsx'
+import ProgressJourney from './pages/ProgressJourney.jsx'
+import CompassPage from './pages/CompassPage.jsx'
 
 function App() {
   return (
@@ -21,6 +23,8 @@ function App() {
       <Route path="/setup/ready" element={<ReadyPage />} />
       <Route path="/workspace" element={<Workspace />} />
       <Route path="/focus" element={<FocusSession />} />
+      <Route path="/progress" element={<ProgressJourney />} />
+      <Route path="/compass" element={<CompassPage />} />
     </Routes>
   )
 }
