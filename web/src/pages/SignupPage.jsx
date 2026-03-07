@@ -116,7 +116,7 @@ export default function SignupPage() {
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#A1B3A5]" />
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e)=>setPassword(e.target.value)}
                 placeholder='Enter Password'

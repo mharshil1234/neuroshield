@@ -25,7 +25,6 @@ export default function SetupQ1() {
 
   const handleContinue = async () => {
 
-    console.log("Sending question to backend", selected);
     updateAnswer('distractions', selected);
 
     const token = localStorage.getItem("token");

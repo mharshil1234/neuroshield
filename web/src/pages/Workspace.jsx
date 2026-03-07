@@ -6,6 +6,16 @@ import axios from "axios";
 
 export default function Workspace() {
 
+  useEffect(() => {
+  
+    const token = localStorage.getItem("token");
+  
+    if (!token) {
+      navigate("/");
+    }
+  
+  }, []);
+
   const [user, setUser] = useState(null);
 
   const navigate = useNavigate();

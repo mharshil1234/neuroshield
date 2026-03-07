@@ -19,10 +19,6 @@ export const updateQuestions = async (req, res) => {
 
     const { field, value } = req.body;
 
-    console.log("FIELD:", field);
-    console.log("VALUE:", value);
-    console.log("USER ID:", req.user.id);
-
     const user = await User.findByIdAndUpdate(
       req.user.id,
       { $set: { [`questions.${field}`]: value } },
