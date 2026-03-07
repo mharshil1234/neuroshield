@@ -1,15 +1,50 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import axios from "axios";
+import { useEffect } from "react";
 
 export default function SigninEmailPage() {
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignin = (e) => {
-    e.preventDefault();
-    navigate('/setup/1');
-  };
+  useEffect(() => {
+
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    navigate("/workspace");
+  }
+
+}, []);
+
+  const handleSignin = async (e) => {
+  e.preventDefault();
+
+  try {
+    const res = await axios.post(
+      "http://localhost:5000/api/auth/login",
+      {
+        email,
+        password
+      }
+    );
+
+    // save token
+    localStorage.setItem("token", res.data.token);
+
+    // go to workspace
+    navigate("/workspace");
+
+  } catch (err) {
+    console.error(err);
+    alert("Invalid email or password");
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#E2EFE5] to-[#D3E8D7] flex flex-col items-center justify-center relative font-sans p-4">
@@ -41,8 +76,10 @@ export default function SigninEmailPage() {
               <input
                 type="email"
                 placeholder="Email address"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full pl-11 pr-4 py-3.5 rounded-full border border-[#D2E2D5] bg-[#F7FAF8] text-[15px] text-[#314339] placeholder-[#A1B3A5] focus:outline-none focus:border-[#6B8E73] focus:ring-1 focus:ring-[#6B8E73] transition-colors"
+                className="w-full pl-11 pr-12 py-3.5 rounded-full border border-[#D2E2D5] bg-[#F7FAF8] text-[15px] text-[#314339] placeholder-[#A1B3A5] focus:outline-none focus:border-[#6B8E73] focus:ring-1 focus:ring-[#6B8E73] transition-colors"
               />
             </div>
 
@@ -52,6 +89,8 @@ export default function SigninEmailPage() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 required
                 className="w-full pl-11 pr-12 py-3.5 rounded-full border border-[#D2E2D5] bg-[#F7FAF8] text-[15px] text-[#314339] placeholder-[#A1B3A5] focus:outline-none focus:border-[#6B8E73] focus:ring-1 focus:ring-[#6B8E73] transition-colors"
               />

@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-  
+
   name: {
     type: String,
     required: true
@@ -19,17 +19,17 @@ const userSchema = new mongoose.Schema({
   },
 
   questions: {
-    q1: {
-      type: [String],   // multiple answers
-      default: []
-    },
-
-    q2: {
+    distractions: {
       type: [String],
       default: []
     },
 
-    q3: {
+    productivity: {
+      type: [String],
+      default: []
+    },
+
+    struggles: {
       type: [String],
       default: []
     }

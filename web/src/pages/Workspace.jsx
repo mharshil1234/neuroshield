@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Zap, Home, Calendar, BarChart2, Settings, ChevronDown } from 'lucide-react';
 import { atomizeTask } from '../utils/atomizeTask.js';
+import axios from "axios";
 
 export default function Workspace() {
+
+  const [user, setUser] = useState(null);
+
   const navigate = useNavigate();
   const [brainDump, setBrainDump] = useState('');
   const [greeting, setGreeting] = useState('Good Morning');
@@ -18,6 +22,35 @@ export default function Workspace() {
     else setGreeting('Good Evening');
   }, []);
 
+  useEffect(() => {
+
+  const fetchUser = async () => {
+
+    try {
+
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        "http://localhost:5000/api/user/me",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      setUser(res.data);
+
+    } catch (error) {
+      console.error("Failed to fetch user", error);
+    }
+
+  };
+
+  fetchUser();
+
+  }, []);
+
   return (
     <div className="min-h-screen w-full bg-[#E5ECE5] flex flex-col items-center relative font-sans overflow-y-auto">
       {/* Top Header - positioned fixed so it remains visible while scrolling, but transparent */}
@@ -27,7 +60,10 @@ export default function Workspace() {
           <span className="text-xl font-bold text-[#4D6251] tracking-tight">NeuroShield</span>
         </div>
         <div className="w-11 h-11 rounded-full bg-[#A3BFA9] flex items-center justify-center text-white font-medium text-lg shadow-sm">
-          BA
+          {user?.name
+            ?.split(" ")
+            .map(n => n[0])
+            .join("")}
         </div>
       </header>
 
@@ -37,7 +73,7 @@ export default function Workspace() {
         {/* Hero Headers */}
         <div className="text-center mb-8 relative">
           <h1 className="text-[2.25rem] font-bold text-[#314339] mb-2 tracking-tight">
-            {greeting}, Bhumi.
+            {user ? `${greeting}, ${user.name}.` : greeting}
           </h1>
           
           <div className="relative inline-block">

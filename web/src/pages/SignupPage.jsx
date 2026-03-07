@@ -1,15 +1,46 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, User, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { signupUser } from "../api/auth";
+import { useEffect } from "react";
 
 export default function SignupPage() {
+
+  useEffect(() => {
+
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    navigate("/workspace");
+  }
+
+}, []);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-    navigate('/setup/1');
+
+    try {
+      const res = await signupUser({
+        name,
+        email,
+        password
+      });
+
+      localStorage.setItem("token", res.data.token);
+
+      navigate("/setup/1");
+    } catch (err) {
+      console.error(err);
+      alert("Signup failed");
+    }
   };
 
   return (
@@ -62,8 +93,9 @@ export default function SignupPage() {
               <User className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#A1B3A5]" />
               <input
                 type="text"
-                placeholder="Full name"
-                required
+                value={name}
+                onChange={(e)=>setName(e.target.value)}
+                placeholder='Enter Name'
                 className="w-full pl-11 pr-4 py-3.5 rounded-full border border-[#D2E2D5] bg-[#F7FAF8] text-[15px] text-[#314339] placeholder-[#A1B3A5] focus:outline-none focus:border-[#6B8E73] focus:ring-1 focus:ring-[#6B8E73] transition-colors"
               />
             </div>
@@ -73,8 +105,9 @@ export default function SignupPage() {
               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#A1B3A5]" />
               <input
                 type="email"
-                placeholder="Email address"
-                required
+                value={email}
+                onChange={(e)=>setEmail(e.target.value)}
+                placeholder='Enter Email'
                 className="w-full pl-11 pr-4 py-3.5 rounded-full border border-[#D2E2D5] bg-[#F7FAF8] text-[15px] text-[#314339] placeholder-[#A1B3A5] focus:outline-none focus:border-[#6B8E73] focus:ring-1 focus:ring-[#6B8E73] transition-colors"
               />
             </div>
@@ -83,10 +116,11 @@ export default function SignupPage() {
             <div className="relative">
               <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#A1B3A5]" />
               <input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="Password"
-                required
-                className="w-full pl-11 pr-12 py-3.5 rounded-full border border-[#D2E2D5] bg-[#F7FAF8] text-[15px] text-[#314339] placeholder-[#A1B3A5] focus:outline-none focus:border-[#6B8E73] focus:ring-1 focus:ring-[#6B8E73] transition-colors"
+                type="password"
+                value={password}
+                onChange={(e)=>setPassword(e.target.value)}
+                placeholder='Enter Password'
+                className="w-full pl-11 pr-4 py-3.5 rounded-full border border-[#D2E2D5] bg-[#F7FAF8] text-[15px] text-[#314339] placeholder-[#A1B3A5] focus:outline-none focus:border-[#6B8E73] focus:ring-1 focus:ring-[#6B8E73] transition-colors"
               />
               <button
                 type="button"

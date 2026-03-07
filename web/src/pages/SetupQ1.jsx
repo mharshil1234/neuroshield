@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../context/OnboardingContext.jsx';
 import { Shield } from 'lucide-react';
+import axios from "axios";
 
 const options = [
   'Social Media',
@@ -22,10 +23,28 @@ export default function SetupQ1() {
     );
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
+
+    console.log("Sending question to backend", selected);
     updateAnswer('distractions', selected);
+
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      "http://localhost:5000/api/user/questions",
+      {
+        field: "distractions",
+        value: selected
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
     navigate('/setup/2');
-  };
+};
 
   return (
     <div className="h-screen w-full bg-[#DDE9DD] flex items-center justify-center font-sans overflow-hidden">

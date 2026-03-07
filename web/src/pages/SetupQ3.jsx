@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOnboarding } from '../context/OnboardingContext.jsx';
 import { Shield } from 'lucide-react';
+import axios from "axios";
 
 const options = [
   'Starting tasks',
@@ -22,10 +23,33 @@ export default function SetupQ3() {
     );
   };
 
-  const handleContinue = () => {
-    updateAnswer('struggles', selected);
-    navigate('/setup/ready');
-  };
+  const handleContinue = async () => {
+
+  updateAnswer('struggles', selected);
+
+  try {
+
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      "http://localhost:5000/api/user/questions",
+      {
+        field: "struggles",
+        value: selected
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+  } catch (error) {
+    console.error("Failed to save struggles question", error);
+  }
+
+  navigate('/setup/ready');
+};
 
   return (
     <div className="h-screen w-full bg-[#DDE9DD] flex items-center justify-center font-sans overflow-hidden">

@@ -1,8 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 import { Shield, Mail } from 'lucide-react';
+import { useEffect } from "react";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    navigate("/workspace");
+  }
+
+}, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#E2EFE5] to-[#D3E8D7] flex flex-col items-center justify-center relative font-sans p-4">
