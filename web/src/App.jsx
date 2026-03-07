@@ -10,6 +10,7 @@ import Workspace from './pages/Workspace.jsx'
 import FocusSession from './pages/FocusSession.jsx'
 import ProgressJourney from './pages/ProgressJourney.jsx'
 import CompassPage from './pages/CompassPage.jsx'
+import SettingsPage from './pages/SettingsPage.jsx'
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
       <Route path="/focus" element={<FocusSession />} />
       <Route path="/progress" element={<ProgressJourney />} />
       <Route path="/compass" element={<CompassPage />} />
+      <Route path="/settings" element={<SettingsPage />} />
     </Routes>
   )
 }

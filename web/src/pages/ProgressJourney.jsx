@@ -122,24 +122,27 @@ export default function ProgressJourney() {
       </main>
 
       {/* Floating Bottom Navigation */}
-      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white rounded-full px-8 py-4 flex items-center justify-center gap-8 shadow-[0_15px_50px_rgb(107,142,115,0.1)] z-50">
+      <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white rounded-full px-6 py-3 flex items-center justify-center gap-6 shadow-[0_15px_50px_rgb(107,142,115,0.1)] z-50">
         <button
           onClick={() => navigate('/workspace')}
-          className="w-[42px] h-[42px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer"
+          className="w-[34px] h-[34px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer"
         >
-          <Home className="w-5 h-5" />
+          <Home className="w-4 h-4" />
         </button>
-        <button className="w-[42px] h-[42px] rounded-full bg-[#A3C0AB] flex items-center justify-center text-white transition-colors cursor-pointer shadow-sm">
-          <Calendar className="w-5 h-5" fill="currentColor" />
+        <button className="w-[34px] h-[34px] rounded-full bg-[#A3C0AB] flex items-center justify-center text-white transition-colors cursor-pointer shadow-sm">
+          <Calendar className="w-4 h-4" fill="currentColor" />
         </button>
         <button
           onClick={() => navigate('/compass')}
-          className="w-[42px] h-[42px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer"
+          className="w-[34px] h-[34px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer"
         >
-          <BarChart2 className="w-5 h-5" />
+          <BarChart2 className="w-4 h-4" />
         </button>
-        <button className="w-[42px] h-[42px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer">
-          <Settings className="w-5 h-5" />
+        <button
+          onClick={() => navigate('/settings')}
+          className="w-[34px] h-[34px] rounded-full text-[#A1B3A5] hover:text-[#6B8E73] hover:bg-[#E2EFE5]/40 flex items-center justify-center transition-colors cursor-pointer"
+        >
+          <Settings className="w-4 h-4" />
         </button>
       </nav>
     </div>
