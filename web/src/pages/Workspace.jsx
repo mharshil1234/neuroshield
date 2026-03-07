@@ -236,6 +236,8 @@ export default function Workspace() {
               }
 
             }}
+
+            className="mx-auto flex items-center gap-2 bg-[#6B8E73] hover:bg-[#5A7A61] hover:cursor-pointer text-white font-semibold px-6 py-3 rounded-full transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
 
             <Zap className="w-[18px] h-[18px]" fill="currentColor" />
