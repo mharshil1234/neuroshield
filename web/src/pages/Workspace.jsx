@@ -140,20 +140,52 @@ export default function Workspace() {
           />
 
           {/* Start Focus Session Button */}
+
           <button
             disabled={brainDump.trim().length === 0 || isLoading}
             onClick={async () => {
+
               setIsLoading(true);
+
               try {
+
                 const steps = await atomizeTask(brainDump, energyLevel);
-                navigate('/focus', { state: { steps, taskName: brainDump } });
+
+                const token = localStorage.getItem("token");
+
+                const res = await axios.post(
+                  "http://localhost:5000/api/tasks/create",
+                  {
+                    taskName: brainDump,
+                    steps
+                  },
+                  {
+                    headers: {
+                      Authorization: `Bearer ${token}`
+                    }
+                  }
+                );
+
+                const taskId = res.data._id;
+
+                navigate('/focus', {
+                  state: {
+                    steps,
+                    taskName: brainDump,
+                    taskId
+                  }
+                });
+
               } catch (err) {
-                console.error('Failed to atomize task:', err);
+
+                console.error("Failed to create task:", err);
                 setIsLoading(false);
+
               }
+
             }}
-            className="mx-auto flex items-center gap-2.5 bg-[#6B8E73] text-white px-9 py-3.5 rounded-full font-bold transition-colors disabled:opacity-90 disabled:cursor-not-allowed shadow-[0_8px_25px_rgb(107,142,115,0.4)] whitespace-nowrap text-[15px]"
           >
+
             <Zap className="w-[18px] h-[18px]" fill="currentColor" />
             {isLoading ? 'Breaking it down...' : 'Start Focus Session'}
           </button>

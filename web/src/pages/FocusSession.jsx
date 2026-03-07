@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Shield, X } from 'lucide-react';
+import axios from "axios";
 
 export default function FocusSession() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { steps = [], taskName = '' } = location.state || {};
+  const { steps = [], taskName = '', taskId = null } = location.state || {};
   const [currentStep, setCurrentStep] = useState(0);
   const [completed, setCompleted] = useState(false);
   const [isBuddyActive, setIsBuddyActive] = useState(false);
@@ -28,13 +29,36 @@ export default function FocusSession() {
   const step = steps[currentStep];
   const progress = ((currentStep + 1) / totalSteps) * 100;
 
-  const handleMarkDone = () => {
+  const handleMarkDone = async () => {
+
+  try {
+
+    const token = localStorage.getItem("token");
+
+    await axios.post(
+      "http://localhost:5000/api/tasks/step",
+      {
+        taskId,
+        stepIndex: currentStep
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
     if (currentStep < totalSteps - 1) {
       setCurrentStep(prev => prev + 1);
     } else {
       setCompleted(true);
     }
-  };
+
+  } catch (error) {
+    console.error("Failed to update step:", error);
+  }
+
+};
 
   const handleBrainFull = () => {
     navigate('/workspace', { state: { resumeTask: taskName, resumeStep: currentStep + 1 } });
