@@ -1,34 +1,23 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Routes, Route } from 'react-router-dom'
+import LoginPage from './pages/LoginPage.jsx'
+import SetupQ1 from './pages/SetupQ1.jsx'
+import SetupQ2 from './pages/SetupQ2.jsx'
+import SetupQ3 from './pages/SetupQ3.jsx'
+import ReadyPage from './pages/ReadyPage.jsx'
+import Workspace from './pages/Workspace.jsx'
+import FocusSession from './pages/FocusSession.jsx'
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+      <Route path="/setup/1" element={<SetupQ1 />} />
+      <Route path="/setup/2" element={<SetupQ2 />} />
+      <Route path="/setup/3" element={<SetupQ3 />} />
+      <Route path="/setup/ready" element={<ReadyPage />} />
+      <Route path="/workspace" element={<Workspace />} />
+      <Route path="/focus" element={<FocusSession />} />
+    </Routes>
   )
 }
 
