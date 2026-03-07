@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Shield } from 'lucide-react';
+import { Shield, X } from 'lucide-react';
 
 export default function FocusSession() {
   const location = useLocation();
@@ -8,6 +8,7 @@ export default function FocusSession() {
   const { steps = [], taskName = '' } = location.state || {};
   const [currentStep, setCurrentStep] = useState(0);
   const [completed, setCompleted] = useState(false);
+  const [isBuddyActive, setIsBuddyActive] = useState(false);
 
   // Guard: if no steps, redirect back
   if (!steps.length) {
@@ -36,7 +37,6 @@ export default function FocusSession() {
   };
 
   const handleBrainFull = () => {
-    // Save progress info and return to workspace
     navigate('/workspace', { state: { resumeTask: taskName, resumeStep: currentStep + 1 } });
   };
 
@@ -44,7 +44,6 @@ export default function FocusSession() {
   if (completed) {
     return (
       <div className="h-screen w-full bg-[#DDE9DD] flex flex-col items-center justify-center font-sans overflow-hidden">
-        {/* Header */}
         <header className="w-full px-8 py-6 flex items-center justify-between z-20 fixed top-0">
           <div className="flex items-center gap-2">
             <Shield className="w-6 h-6 text-[#4D6251]" fill="currentColor" fillOpacity={0.2} />
@@ -69,8 +68,63 @@ export default function FocusSession() {
     );
   }
 
+  // ─── Task Card (shared between centered & split layouts) ───
+  // ─── Task Card ───
+  const taskCard = (
+    <div className="bg-white rounded-[28px] px-8 pt-6 pb-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] flex flex-col items-center w-full max-w-[520px]">
+      {/* Progress */}
+      <div className="w-full mb-6">
+        <div className="flex justify-between text-[9px] font-bold text-[#8FA898] mb-1.5 uppercase tracking-[0.12em]">
+          <span>Step {currentStep + 1} of {totalSteps}</span>
+        </div>
+        <div className="w-full h-[6px] bg-[#E5EBE6] rounded-full overflow-hidden">
+          <div
+            className="h-full bg-[#74967A] rounded-full transition-all duration-500"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Step Title */}
+      <h1 className="text-[20px] font-bold text-[#2C3E32] text-center leading-snug mb-8 px-2">
+        {step}
+      </h1>
+
+      {/* Apple Watch Breathe Flower */}
+      <div className="mb-8 flex items-center justify-center">
+        <div className="breathe-flower-wrap">
+          <div className="breathe-flower">
+            <div className="breathe-petal" />
+            <div className="breathe-petal" />
+            <div className="breathe-petal" />
+            <div className="breathe-petal" />
+            <div className="breathe-petal" />
+            <div className="breathe-petal" />
+            <div className="breathe-petal" />
+          </div>
+        </div>
+      </div>
+
+      {/* Mark as Done */}
+      <button
+        onClick={handleMarkDone}
+        className="w-full max-w-[320px] bg-[#74967A] text-white py-[13px] rounded-full text-[15px] font-semibold hover:bg-[#5A7A61] transition-colors shadow-sm mb-3 cursor-pointer"
+      >
+        Mark as Done (+50 EXP)
+      </button>
+
+      {/* Brain Full */}
+      <button
+        onClick={handleBrainFull}
+        className="text-[#8A998F] text-[12px] font-medium hover:text-[#74967A] transition-colors cursor-pointer"
+      >
+        My brain is full
+      </button>
+    </div>
+  );
+
   return (
-    <div className="h-screen w-full bg-[#DDE9DD] flex flex-col items-center font-sans overflow-hidden">
+    <div className="h-screen w-full bg-[#F6F8F6] flex flex-col font-sans overflow-hidden">
       {/* Header */}
       <header className="w-full px-8 py-6 flex items-center justify-between z-20 shrink-0">
         <div className="flex items-center gap-2">
@@ -80,70 +134,70 @@ export default function FocusSession() {
         <div className="w-11 h-11 rounded-full bg-[#A3BFA9] flex items-center justify-center text-white font-medium text-lg shadow-sm">BA</div>
       </header>
 
-      {/* Main Content */}
+      {/* Main Content — always centered */}
       <main className="flex-1 w-full flex flex-col items-center justify-center px-4 -mt-8">
+        {taskCard}
+      </main>
 
-        {/* Step Card */}
-        <div className="w-full max-w-[520px] bg-white rounded-[28px] px-8 pt-6 pb-8 shadow-[0_8px_30px_rgb(0,0,0,0.06)] relative z-10 flex flex-col items-center">
+      {/* Bottom Mascot Bar — visible when buddy popup is NOT open */}
+      {!isBuddyActive && (
+        <div className="shrink-0 flex justify-center pb-6 px-4">
+          <button
+            onClick={() => setIsBuddyActive(true)}
+            className="w-full max-w-[520px] bg-white/60 backdrop-blur-sm rounded-full px-5 py-3 flex items-center gap-3 shadow-sm hover:bg-white/80 transition-colors cursor-pointer"
+          >
+            <img src="/mascot.png" alt="Mascot" className="w-[32px] h-[32px] object-contain" />
+            <span className="text-[13px] text-[#74967A] font-medium">
+              {getEncouragement(currentStep, totalSteps)}
+            </span>
+          </button>
+        </div>
+      )}
 
-          {/* Progress */}
-          <div className="w-full mb-6">
-            <div className="flex justify-between text-[9px] font-bold text-[#8FA898] mb-1.5 uppercase tracking-[0.12em]">
-              <span>Step {currentStep + 1} of {totalSteps}</span>
-            </div>
-            <div className="w-full h-[6px] bg-[#E5EBE6] rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#6B8E73] rounded-full transition-all duration-500"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          </div>
+      {/* ─── Focus Buddy Popup Overlay ─── */}
+      {isBuddyActive && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm"
+          onClick={() => setIsBuddyActive(false)}
+        >
+          <div
+            className="bg-[#E8F0E9] rounded-[28px] p-12 flex flex-col items-center relative shadow-[0_20px_60px_rgb(0,0,0,0.12)] max-w-[460px] w-[90%]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setIsBuddyActive(false)}
+              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/60 flex items-center justify-center text-[#8A998F] hover:text-[#74967A] hover:bg-white transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
 
-          {/* Step Title */}
-          <h1 className="text-[20px] font-bold text-[#2C3E32] text-center leading-snug mb-8 px-2">
-            {step}
-          </h1>
-
-          {/* Apple Watch Breathe Flower */}
-          <div className="mb-8 flex items-center justify-center">
-            <div className="breathe-flower-wrap">
-              <div className="breathe-flower">
-                <div className="breathe-petal" />
-                <div className="breathe-petal" />
-                <div className="breathe-petal" />
-                <div className="breathe-petal" />
-                <div className="breathe-petal" />
-                <div className="breathe-petal" />
-                <div className="breathe-petal" />
+            {/* Pebble Working Animation */}
+            <div className="mb-6">
+              <div className="w-[160px] h-[160px] rounded-[24px] bg-[#D0E0D2] flex items-center justify-center shadow-[0_8px_30px_rgb(116,150,122,0.15)] overflow-hidden">
+                <img src="/pebble-working.png" alt="Pebble working" className="w-[140px] h-[140px] object-contain" />
               </div>
             </div>
+
+            {/* Buddy Name */}
+            <h2 className="text-[22px] font-bold text-[#314339] mb-1">Pebble</h2>
+            <p className="text-[13px] text-[#8A998F] font-medium mb-6">Your Focus Buddy</p>
+
+            {/* Status Badge */}
+            <div className="bg-white/70 backdrop-blur-sm rounded-full px-5 py-2.5 flex items-center gap-2.5 shadow-sm mb-6">
+              <div className="w-[8px] h-[8px] rounded-full bg-[#74967A] animate-pulse" />
+              <span className="text-[13px] text-[#74967A] font-semibold">
+                Pebble is body-doubling with you
+              </span>
+            </div>
+
+            {/* Encouragement */}
+            <p className="text-[12px] text-[#8A998F] text-center max-w-[220px] leading-relaxed">
+              {getEncouragement(currentStep, totalSteps)}
+            </p>
           </div>
-
-          {/* Mark as Done */}
-          <button
-            onClick={handleMarkDone}
-            className="w-full max-w-[320px] bg-[#6B8E73] text-white py-[13px] rounded-full text-[15px] font-semibold hover:bg-[#5A7A61] transition-colors shadow-sm mb-3"
-          >
-            Mark as Done (+50 EXP)
-          </button>
-
-          {/* Brain Full */}
-          <button
-            onClick={handleBrainFull}
-            className="text-[#8FA898] text-[12px] font-medium hover:text-[#6B8E73] transition-colors"
-          >
-            My brain is full
-          </button>
         </div>
-
-        {/* Mascot Encouragement Bar */}
-        <div className="w-full max-w-[520px] mt-6 bg-white/60 backdrop-blur-sm rounded-full px-5 py-3 flex items-center gap-3 shadow-sm">
-          <img src="/mascot.png" alt="Mascot" className="w-[32px] h-[32px] object-contain" />
-          <span className="text-[13px] text-[#6B8E73] font-medium">
-            {getEncouragement(currentStep, totalSteps)}
-          </span>
-        </div>
-      </main>
+      )}
     </div>
   );
 }
