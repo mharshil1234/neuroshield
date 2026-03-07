@@ -6,6 +6,7 @@ import axios from "axios";
 
 export default function Workspace() {
 
+  /*
   useEffect(() => {
   
     const token = localStorage.getItem("token");
@@ -15,6 +16,7 @@ export default function Workspace() {
     }
   
   }, []);
+  */
 
   const [user, setUser] = useState(null);
 
