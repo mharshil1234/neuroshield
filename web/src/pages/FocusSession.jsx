@@ -104,14 +104,18 @@ export default function FocusSession() {
             {step}
           </h1>
 
-          {/* Blooming Flower Circle (Layered Petal Style) */}
-          <div className="mb-8 flex items-center justify-center relative w-[200px] h-[200px]">
-            <div className="flower-main absolute flex items-center justify-center">
-              <div className="petal petal-1" />
-              <div className="petal petal-2" />
-              <div className="petal petal-3" />
-              <div className="petal petal-4" />
-              <div className="petal petal-5" />
+          {/* Apple Watch Breathe Flower */}
+          <div className="mb-8 flex items-center justify-center">
+            <div className="breathe-flower-wrap">
+              <div className="breathe-flower">
+                <div className="breathe-petal" />
+                <div className="breathe-petal" />
+                <div className="breathe-petal" />
+                <div className="breathe-petal" />
+                <div className="breathe-petal" />
+                <div className="breathe-petal" />
+                <div className="breathe-petal" />
+              </div>
             </div>
           </div>
 

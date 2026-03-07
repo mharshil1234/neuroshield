@@ -41,7 +41,7 @@ export default function LoginPage() {
           </button>
 
           <button
-            onClick={() => navigate('/setup/1')}
+            onClick={() => navigate('/signin')}
             className="w-full flex items-center justify-center gap-3 rounded-full bg-[#6B8E73] py-3.5 px-6 text-[15px] font-medium text-white hover:bg-[#5A7A61] transition-colors shadow-sm cursor-pointer mb-6"
           >
             <Mail className="w-5 h-5" />
@@ -57,7 +57,7 @@ export default function LoginPage() {
 
           {/* Footer Link */}
           <button 
-            onClick={() => navigate('/setup/1')}
+            onClick={() => navigate('/signup')}
             className="text-[15px] font-medium text-[#6B8E73] hover:text-[#5A7A61] transition-colors cursor-pointer"
           >
             Create an account

@@ -29,54 +29,53 @@ body {
   border-radius: 3px;
 }
 
-/* Flower bloom / droop breathing animation - Layered Petal Style */
-@keyframes bloom-main {
-  0%, 100% { transform: scale(0.9); opacity: 0.6; }
-  50% { transform: scale(1.15); opacity: 0.9; }
+/* ===== Apple Watch Breathe Flower ===== */
+.breathe-flower {
+  position: relative;
+  width: 180px;
+  height: 180px;
 }
 
-@keyframes petal-rotate-1 {
-  0%, 100% { transform: rotate(0deg) translate(0, 0) scale(0.9); }
-  50% { transform: rotate(0deg) translate(0, -10px) scale(1.1); }
-}
-@keyframes petal-rotate-2 {
-  0%, 100% { transform: rotate(72deg) translate(0, 0) scale(0.9); }
-  50% { transform: rotate(72deg) translate(0, -10px) scale(1.1); }
-}
-@keyframes petal-rotate-3 {
-  0%, 100% { transform: rotate(144deg) translate(0, 0) scale(0.9); }
-  50% { transform: rotate(144deg) translate(0, -10px) scale(1.1); }
-}
-@keyframes petal-rotate-4 {
-  0%, 100% { transform: rotate(216deg) translate(0, 0) scale(0.9); }
-  50% { transform: rotate(216deg) translate(0, -10px) scale(1.1); }
-}
-@keyframes petal-rotate-5 {
-  0%, 100% { transform: rotate(288deg) translate(0, 0) scale(0.9); }
-  50% { transform: rotate(288deg) translate(0, -10px) scale(1.1); }
-}
-
-.petal {
+.breathe-petal {
   position: absolute;
-  width: 160px;
-  height: 160px;
-  background: radial-gradient(circle, rgba(118, 198, 140, 0.6) 0%, rgba(163, 214, 178, 0.2) 100%);
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  margin-left: -40px;
+  margin-top: -40px;
   border-radius: 50%;
-  filter: blur(6px);
-  mix-blend-mode: multiply;
+  background: radial-gradient(circle at 35% 35%, rgba(100, 200, 140, 0.9), rgba(60, 170, 110, 0.55));
+  animation: breathe-expand 8s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
+/* 7 evenly spaced petals (360 / 7 ≈ 51.43°) */
+.breathe-petal:nth-child(1) { --angle: 0deg; }
+.breathe-petal:nth-child(2) { --angle: 51.43deg; }
+.breathe-petal:nth-child(3) { --angle: 102.86deg; }
+.breathe-petal:nth-child(4) { --angle: 154.29deg; }
+.breathe-petal:nth-child(5) { --angle: 205.71deg; }
+.breathe-petal:nth-child(6) { --angle: 257.14deg; }
+.breathe-petal:nth-child(7) { --angle: 308.57deg; }
 
-
-.petal-1 { animation: petal-rotate-1 8s ease-in-out infinite; }
-.petal-2 { animation: petal-rotate-2 8s ease-in-out infinite; }
-.petal-3 { animation: petal-rotate-3 8s ease-in-out infinite; }
-.petal-4 { animation: petal-rotate-4 8s ease-in-out infinite; }
-.petal-5 { animation: petal-rotate-5 8s ease-in-out infinite; }
-
-.flower-main {
-  animation: bloom-main 8s ease-in-out infinite;
+@keyframes breathe-expand {
+  0%, 100% {
+    transform: rotate(var(--angle)) translateY(0px) scale(0.75);
+    opacity: 0.55;
+  }
+  50% {
+    transform: rotate(var(--angle)) translateY(-42px) scale(1);
+    opacity: 0.88;
+  }
 }
 
+/* Gentle whole-flower rotation for organic feel */
+.breathe-flower-wrap {
+  animation: flower-spin 20s linear infinite;
+}
 
-
+@keyframes flower-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
