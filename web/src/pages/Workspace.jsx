@@ -19,6 +19,58 @@ export default function Workspace() {
   */
 
   const [user, setUser] = useState(null);
+  const [resumeTask, setResumeTask] = useState(null);
+
+  useEffect(() => {
+
+  const fetchTasks = async () => {
+
+    try {
+
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        "http://localhost:5000/api/tasks",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const tasks = res.data;
+
+      // find unfinished task
+      const unfinished = tasks.find(task =>
+        task.steps.some(step => !step.completed)
+      );
+
+      if (unfinished) {
+
+        const stepIndex = unfinished.steps.findIndex(
+          step => !step.completed
+        );
+
+        setResumeTask({
+          taskId: unfinished._id,
+          taskName: unfinished.taskName,
+          steps: unfinished.steps.map(s => s.content),
+          stepIndex
+        });
+
+      }
+
+    } catch (error) {
+
+      console.error("Failed to load tasks", error);
+
+    }
+
+  };
+
+  fetchTasks();
+
+}, []);
 
   const navigate = useNavigate();
   const [brainDump, setBrainDump] = useState('');
@@ -192,14 +244,31 @@ export default function Workspace() {
         </div>
 
         {/* Contextual Banner */}
-        <div className="w-full max-w-[700px] bg-[#D7E4D9] rounded-2xl py-4 flex items-center justify-between mb-10 px-6">
-          <span className="text-[14px] font-medium text-[#6B8E73]">
-            Your brain was full yesterday. Want to resume "Write OS Report" on Step 2?
-          </span>
-          <button className="text-[14px] font-bold text-[#5A7A61] hover:text-[#314339] transition-colors whitespace-nowrap ml-4">
-            Resume Task
-          </button>
-        </div>
+        {resumeTask && (
+  <div className="w-full max-w-[700px] bg-[#D7E4D9] rounded-2xl py-4 flex items-center justify-between mb-10 px-6">
+    
+    <span className="text-[14px] font-medium text-[#6B8E73]">
+      You have an unfinished task: "{resumeTask.taskName}". Resume from Step {resumeTask.stepIndex + 1}?
+    </span>
+
+    <button
+      onClick={() =>
+        navigate("/focus", {
+          state: {
+            steps: resumeTask.steps,
+            taskName: resumeTask.taskName,
+            taskId: resumeTask.taskId,
+            startStep: resumeTask.stepIndex
+          }
+        })
+      }
+      className="text-[14px] font-bold text-[#5A7A61] hover:text-[#314339] transition-colors whitespace-nowrap ml-4"
+    >
+      Resume Task
+    </button>
+
+  </div>
+)}
 
         {/* Progress Section */}
         <div className="w-full max-w-[500px] mx-auto">

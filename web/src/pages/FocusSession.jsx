@@ -7,7 +7,8 @@ export default function FocusSession() {
   const location = useLocation();
   const navigate = useNavigate();
   const { steps = [], taskName = '', taskId = null } = location.state || {};
-  const [currentStep, setCurrentStep] = useState(0);
+  const { startStep = 0 } = location.state || {};
+  const [currentStep, setCurrentStep] = useState(startStep);
   const [completed, setCompleted] = useState(false);
   const [isBuddyActive, setIsBuddyActive] = useState(false);
 
