@@ -143,7 +143,7 @@ Suggest ONE specific, creative, fun rest activity matching ${redeemAmount} point
               <div className="flex items-center gap-1.5 mt-1">
                 <Shield className="w-3.5 h-3.5 text-[#6B8E73]" fill="currentColor" fillOpacity={0.5} />
                 <span className="text-[11px] text-[#829E8C] font-medium ml-1">
-                  {focusBankDays} Days Shown Up. Every day counts. No streaks to break.
+                  Every day counts. No streaks to break.
                 </span>
               </div>
             </div>

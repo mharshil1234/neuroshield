@@ -15,6 +15,32 @@ export default function FocusSession() {
   const [isBreakActive, setIsBreakActive] = useState(false);
   const [breakTimeLeft, setBreakTimeLeft] = useState(5 * 60); // 5 minutes default
   const [isBreakRunning, setIsBreakRunning] = useState(false);
+  const [breakLength, setBreakLength] = useState(5);
+
+  useEffect(() => {
+    const fetchUserSettings = async () => {
+      try {
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get(
+          "http://localhost:5000/api/user/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        setBreakLength(res.data.breakLength || 5);
+        setBreakTimeLeft((res.data.breakLength || 5) * 60);
+
+      } catch (error) {
+        console.error("Failed to fetch settings", error);
+      }
+    };
+
+    fetchUserSettings();
+}, []);
 
   useEffect(() => {
     let interval = null;
@@ -36,7 +62,7 @@ export default function FocusSession() {
 
   const openBreakModal = () => {
     setIsBreakActive(true);
-    setBreakTimeLeft(5 * 60); // Reset to 5m on open
+    setBreakTimeLeft(breakLength * 60);
     setIsBreakRunning(false);
   };
 
