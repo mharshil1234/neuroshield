@@ -80,3 +80,24 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ message: "Failed to update user" });
   }
 };
+
+export const updateFocusSettings = async (req, res) => {
+  try {
+    console.log(req.body);
+    const { focusSessionLength, breakLength } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      {
+        focusSessionLength,
+        breakLength
+      },
+      { returnDocument: "after" }
+    );
+
+    res.json(user);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

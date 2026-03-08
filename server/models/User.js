@@ -43,6 +43,16 @@ const userSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+
+  focusSessionLength: {
+    type: Number,
+    default: 25
+  },
+
+  breakLength: {
+    type: Number,
+    default: 5
   }
 
 });
