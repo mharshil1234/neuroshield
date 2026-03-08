@@ -1,12 +1,44 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Home, Calendar, BarChart2, Settings, Sparkles } from 'lucide-react';
+import axios from "axios";
 
 export default function CompassPage() {
   const navigate = useNavigate();
 
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+
+    const fetchUser = async () => {
+
+      try {
+
+        const token = localStorage.getItem("token");
+
+        const res = await axios.get(
+          "http://localhost:5000/api/user/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        setUser(res.data);
+
+      } catch (error) {
+        console.error("Failed to fetch user", error);
+      }
+
+    };
+
+    fetchUser();
+
+  }, []);
+
   // In production these would come from context/state/AI analysis
   const brainBattery = 35; // percentage
-  const totalExp = 450;
   const shieldDays = 3;
 
   const getBatteryColor = () => {
@@ -32,7 +64,10 @@ export default function CompassPage() {
           <span className="text-xl font-bold text-[#4D6251] tracking-tight">NeuroShield</span>
         </div>
         <div className="w-11 h-11 rounded-full bg-[#A3BFA9] flex items-center justify-center text-white font-medium text-lg shadow-sm">
-          BA
+          {user?.name
+            ?.split(" ")
+            .map(n => n[0])
+            .join("")}
         </div>
       </header>
 
@@ -61,7 +96,7 @@ export default function CompassPage() {
             <Sparkles className="w-4 h-4 text-[#6B8E73]" />
             <div className="flex flex-col">
               <span className="text-[10px] text-[#889B8F] font-medium leading-tight">Points Available</span>
-              <span className="text-[14px] font-bold text-[#314339] leading-tight">{totalExp} EXP</span>
+              <span className="text-[14px] font-bold text-[#314339] leading-tight">{user?.exp} EXP</span>
             </div>
             <button className="text-[11px] font-bold text-[#6B8E73] hover:text-[#5A7A61] transition-colors cursor-pointer ml-1">
               Redeem

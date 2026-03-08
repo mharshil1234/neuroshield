@@ -1,8 +1,42 @@
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Shield, Home, Calendar, BarChart2, Settings, CheckCircle2, PlayCircle } from 'lucide-react';
+import axios from "axios";
 
 export default function ProgressJourney() {
   const navigate = useNavigate();
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+
+  const fetchUser = async () => {
+
+    try {
+
+      const token = localStorage.getItem("token");
+
+      const res = await axios.get(
+        "http://localhost:5000/api/user/me",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      setUser(res.data);
+
+    } catch (error) {
+      console.error("Failed to fetch user", error);
+    }
+
+  };
+
+  fetchUser();
+
+  }, []);
+
 
   // Sample journey data — in production, this would come from state/context/API
   const journeySteps = [
@@ -23,7 +57,10 @@ export default function ProgressJourney() {
           <span className="text-xl font-bold text-[#4D6251] tracking-tight">NeuroShield</span>
         </div>
         <div className="w-11 h-11 rounded-full bg-[#A3BFA9] flex items-center justify-center text-white font-medium text-lg shadow-sm">
-          BA
+          {user?.name
+            ?.split(" ")
+            .map(n => n[0])
+            .join("")}
         </div>
       </header>
 
@@ -33,7 +70,10 @@ export default function ProgressJourney() {
         {/* Journey Header */}
         <div className="flex items-center gap-4 mb-10 w-full max-w-[520px]">
           <div className="w-14 h-14 rounded-full bg-[#A3BFA9] flex items-center justify-center text-white font-bold text-lg shadow-sm">
-            BA
+            {user?.name
+            ?.split(" ")
+            .map(n => n[0])
+            .join("")}
           </div>
           <div>
             <span className="text-[12px] font-semibold text-[#6B8E73] tracking-wide uppercase block">Keep going!</span>
