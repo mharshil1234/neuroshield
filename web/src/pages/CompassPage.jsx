@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Home, Calendar, BarChart2, Settings, Sparkles, X, Gift, Loader2 } from 'lucide-react';
+import { Shield, Home, Calendar, BarChart2, Settings, Sparkles, X, Gift, Loader2, Zap, Heart, Coffee, Waves } from 'lucide-react';
 import axios from "axios";
 
 export default function CompassPage() {
@@ -109,23 +109,11 @@ Suggest ONE specific, creative, fun rest activity matching ${redeemAmount} point
     setRedeemAmount(50);
   };
 
-  // In production these would come from context/state/AI analysis
-  const brainBattery = 35; // percentage
-  const shieldDays = 3;
-
-  const getBatteryColor = () => {
-    if (brainBattery > 60) return '#6B8E73';
-    if (brainBattery > 30) return '#E3A336';
-    return '#D96B6B';
-  };
-
-  const getBatteryMessage = () => {
-    if (brainBattery > 60)
-      return "You're on a roll! Your brain is charged and ready for deeper tasks.";
-    if (brainBattery > 30)
-      return "You've been running on low energy. We've automatically adjusted your tasks into smaller, 2-minute micro-steps.";
-    return "Your brain needs recharging. Consider a break or some light movement before your next task.";
-  };
+  // ADHD-Friendly Data (Mocked for now, in prod derived from settings/sessions)
+  const focusBankDays = 14;
+  const peakFocusHour = "10:00 AM";
+  const rechargeBreaks = 3;
+  const isLowCapacityDay = true; // Could be determined by high 'brain full' clicks or low settings
 
   return (
     <div className="min-h-screen w-full bg-[#E5ECE5] flex flex-col items-center relative font-sans overflow-y-auto">
@@ -151,13 +139,11 @@ Suggest ONE specific, creative, fun rest activity matching ${redeemAmount} point
           <div>
             <h1 className="text-[1.75rem] font-bold text-[#314339] tracking-tight leading-tight">Your Compass</h1>
             <div className="mt-1.5">
-              <span className="text-[10px] font-bold text-[#6B8E73] uppercase tracking-[0.12em] block">Streak Protection</span>
+              <span className="text-[10px] font-bold text-[#6B8E73] uppercase tracking-[0.12em] block">Total Focus Bank</span>
               <div className="flex items-center gap-1.5 mt-1">
-                {[...Array(shieldDays)].map((_, i) => (
-                  <Shield key={i} className="w-3.5 h-3.5 text-[#6B8E73]" fill="currentColor" fillOpacity={0.5} />
-                ))}
+                <Shield className="w-3.5 h-3.5 text-[#6B8E73]" fill="currentColor" fillOpacity={0.5} />
                 <span className="text-[11px] text-[#829E8C] font-medium ml-1">
-                  {shieldDays} Shield Days Available. Rest Without Guilt.
+                  {focusBankDays} Days Shown Up. Every day counts. No streaks to break.
                 </span>
               </div>
             </div>
@@ -168,7 +154,7 @@ Suggest ONE specific, creative, fun rest activity matching ${redeemAmount} point
             <Sparkles className="w-4 h-4 text-[#6B8E73]" />
             <div className="flex flex-col">
               <span className="text-[10px] text-[#889B8F] font-medium leading-tight">Points Available</span>
-              <span className="text-[14px] font-bold text-[#314339] leading-tight">{user?.exp} EXP</span>
+              <span className="text-[14px] font-bold text-[#314339] leading-tight">{user?.exp || 0} EXP</span>
             </div>
             <button
               onClick={() => user?.exp > 0 && setShowRedeemModal(true)}
@@ -181,42 +167,51 @@ Suggest ONE specific, creative, fun rest activity matching ${redeemAmount} point
           </div>
         </div>
 
-        {/* Pattern Noticed Card */}
-        <div className="w-full max-w-[620px] bg-white rounded-[1.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-5 mt-6">
+        {/* Rhythm Insights Card (Replaces Pattern Noticed) */}
+        <div className="w-full max-w-[620px] bg-white rounded-[1.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-5 mt-6 border-l-4 border-[#A3BFA9]">
           <div className="flex items-center gap-3 mb-3">
-            <img src="/mascot.png" alt="Mascot" className="w-8 h-8 object-contain" />
-            <h2 className="text-[16px] font-bold text-[#314339]">Pattern Noticed</h2>
+            <div className="w-8 h-8 rounded-full bg-[#E5ECE5] flex items-center justify-center">
+              <Waves className="w-[18px] h-[18px] text-[#6B8E73]" />
+            </div>
+            <h2 className="text-[16px] font-bold text-[#314339]">Your Natural Rhythm</h2>
           </div>
-          <p className="text-[14px] text-[#5A6B5F] leading-relaxed mb-5">
-            You tend to hit a Wall of Awful around 3PM on Thursdays. Want me to automatically schedule a 15-minute low-stimulation break for this afternoon?
+          <p className="text-[14px] text-[#5A6B5F] leading-relaxed mb-4">
+            Your Peak Focus Hour is <strong>{peakFocusHour}</strong>! Your evening energy naturally winds down, making it a great time for easy tasks. We've adjusted your suggestions to match your flow.
           </p>
-          <button className="w-full max-w-[360px] mx-auto block border border-[#D2E2D5] rounded-full py-3 text-[14px] font-medium text-[#6B8E73] hover:bg-[#F4F6F4] transition-colors cursor-pointer">
-            Auto-schedule break
-          </button>
         </div>
 
-        {/* Brain Battery Card */}
+        {/* Capacity & Recharge Card (Replaces Brain Battery) */}
         <div className="w-full max-w-[620px] bg-white rounded-[1.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-5">
-          <h2 className="text-[16px] font-bold text-[#314339] mb-4">Current Brain Battery</h2>
-
-          {/* Battery Bar */}
-          <div className="w-full h-[10px] bg-[#E5EBE6] rounded-full overflow-hidden mb-3">
-            <div
-              className="h-full rounded-full transition-all duration-700"
-              style={{ width: `${brainBattery}%`, backgroundColor: getBatteryColor() }}
-            />
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 rounded-full bg-[#E5ECE5] flex items-center justify-center">
+              <Heart className="w-[18px] h-[18px] text-[#6B8E73]" fill="currentColor" fillOpacity={0.2} />
+            </div>
+            <h2 className="text-[16px] font-bold text-[#314339]">Capacity & Recharge</h2>
           </div>
 
-          <p className="text-[13px] text-[#5A6B5F] leading-relaxed mb-5">
-            {getBatteryMessage()}
-          </p>
+          <div className="bg-[#F8FAF8] rounded-xl p-4 mb-4 border border-[#E5ECE5]">
+            <div className="flex items-start gap-3">
+              <Zap className="w-5 h-5 text-[#E3A336] shrink-0 mt-0.5" fill="currentColor" fillOpacity={0.3} />
+              <div>
+                <h3 className="text-[14px] font-bold text-[#314339] mb-1">Low-Capacity Day Routine</h3>
+                <p className="text-[13px] text-[#6A7C70] leading-relaxed">
+                  It looks like today is a bit lower energy. That is completely normal! We recommend keeping tasks under 15 minutes today, or taking the day off entirely to recharge.
+                </p>
+              </div>
+            </div>
+          </div>
 
-          <button
-            onClick={() => navigate('/setup/1')}
-            className="w-full max-w-[360px] mx-auto block bg-[#6B8E73] text-white rounded-full py-3.5 text-[14px] font-semibold hover:bg-[#5A7A61] transition-colors shadow-sm cursor-pointer"
-          >
-            Recalibrate My Shield
-          </button>
+          <div className="bg-[#F8FAF8] rounded-xl p-4 border border-[#E5ECE5]">
+            <div className="flex items-start gap-3">
+              <Coffee className="w-5 h-5 text-[#6B8E73] shrink-0 mt-0.5" />
+              <div>
+                <h3 className="text-[14px] font-bold text-[#314339] mb-1">Recharge Rate: {rechargeBreaks} Breaks</h3>
+                <p className="text-[13px] text-[#6A7C70] leading-relaxed">
+                  You took {rechargeBreaks} Brain Rest breaks today, perfectly pacing yourself to match your output. Great job honoring your limits!
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
       </main>

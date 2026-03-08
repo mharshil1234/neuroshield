@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Shield, X } from 'lucide-react';
+import { Shield, X, Coffee, Play, Pause } from 'lucide-react';
 import axios from "axios";
 
 export default function FocusSession() {
@@ -10,6 +10,40 @@ export default function FocusSession() {
   const [currentStep, setCurrentStep] = useState(startStep);
   const [completed, setCompleted] = useState(false);
   const [isBuddyActive, setIsBuddyActive] = useState(false);
+
+  // Break Timer State
+  const [isBreakActive, setIsBreakActive] = useState(false);
+  const [breakTimeLeft, setBreakTimeLeft] = useState(5 * 60); // 5 minutes default
+  const [isBreakRunning, setIsBreakRunning] = useState(false);
+
+  useEffect(() => {
+    let interval = null;
+    if (isBreakRunning && breakTimeLeft > 0) {
+      interval = setInterval(() => {
+        setBreakTimeLeft(time => time - 1);
+      }, 1000);
+    } else if (breakTimeLeft === 0) {
+      setIsBreakRunning(false);
+    }
+    return () => clearInterval(interval);
+  }, [isBreakRunning, breakTimeLeft]);
+
+  const formatTime = (seconds) => {
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    return `${m}:${s.toString().padStart(2, '0')}`;
+  };
+
+  const openBreakModal = () => {
+    setIsBreakActive(true);
+    setBreakTimeLeft(5 * 60); // Reset to 5m on open
+    setIsBreakRunning(false);
+  };
+
+  const closeBreakModal = () => {
+    setIsBreakActive(false);
+    setIsBreakRunning(false);
+  };
 
   // Guard: if no steps, redirect back
   if (!steps.length) {
@@ -155,7 +189,18 @@ export default function FocusSession() {
           <Shield className="w-6 h-6 text-[#4D6251]" fill="currentColor" fillOpacity={0.2} />
           <span className="text-xl font-bold text-[#4D6251] tracking-tight">NeuroShield</span>
         </div>
-        <div className="w-11 h-11 rounded-full bg-[#A3BFA9] flex items-center justify-center text-white font-medium text-lg shadow-sm">BA</div>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={openBreakModal}
+            className="w-11 h-11 rounded-full bg-white flex items-center justify-center text-[#6B8E73] shadow-sm hover:bg-[#E5ECE5] transition-colors cursor-pointer group relative"
+          >
+            <Coffee className="w-5 h-5" />
+            <span className="absolute -bottom-8 bg-[#314339] text-white text-[10px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              Take a Break
+            </span>
+          </button>
+          <div className="w-11 h-11 rounded-full bg-[#A3BFA9] flex items-center justify-center text-white font-medium text-lg shadow-sm">BA</div>
+        </div>
       </header>
 
       {/* Main Content — always centered */}
@@ -175,6 +220,59 @@ export default function FocusSession() {
               {getEncouragement(currentStep, totalSteps)}
             </span>
           </button>
+        </div>
+      )}
+
+      {/* ─── Break Timer Popup Overlay ─── */}
+      {isBreakActive && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md"
+          onClick={closeBreakModal}
+        >
+          <div
+            className="bg-[#F8FAF8] rounded-[28px] p-10 flex flex-col items-center relative shadow-[0_20px_60px_rgb(0,0,0,0.15)] max-w-[400px] w-[90%]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              onClick={closeBreakModal}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-white flex items-center justify-center text-[#8A998F] hover:text-[#74967A] shadow-sm hover:bg-[#E5ECE5] transition-colors cursor-pointer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+
+            <div className="w-16 h-16 rounded-full bg-[#E5ECE5] flex items-center justify-center mb-6">
+              <Coffee className="w-8 h-8 text-[#6B8E73]" />
+            </div>
+
+            <h2 className="text-[22px] font-bold text-[#314339] mb-2">Time to Recharge</h2>
+            <p className="text-[14px] text-[#6A7C70] text-center mb-8 px-4">
+              Step away from the screen, grab some water, or just close your eyes for a moment.
+            </p>
+
+            <div className="text-[4rem] font-bold text-[#314339] tracking-tight leading-none mb-8 font-mono">
+              {formatTime(breakTimeLeft)}
+            </div>
+
+            <div className="flex items-center gap-4 w-full">
+              <button
+                onClick={() => setIsBreakRunning(!isBreakRunning)}
+                className={`flex-1 py-3.5 rounded-full flex items-center justify-center gap-2 font-bold text-[14px] transition-colors shadow-sm cursor-pointer ${
+                  isBreakRunning 
+                    ? 'bg-white text-[#6B8E73] border border-[#D2E2D5] hover:bg-[#F4F6F4]'
+                    : 'bg-[#6B8E73] text-white hover:bg-[#5A7A61]'
+                }`}
+              >
+                {isBreakRunning ? <><Pause className="w-4 h-4 fill-current" /> Pause</> : <><Play className="w-4 h-4 fill-current" /> Start Break</>}
+              </button>
+              
+              <button
+                onClick={closeBreakModal}
+                className="flex-1 bg-transparent text-[#6A7C70] py-3.5 rounded-full font-bold text-[14px] hover:bg-[#E5ECE5] transition-colors cursor-pointer"
+              >
+                End Break
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
