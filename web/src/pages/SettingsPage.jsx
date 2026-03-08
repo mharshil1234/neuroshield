@@ -43,6 +43,31 @@ export default function SettingsPage() {
     navigate('/');
   };
 
+  const handleUpdate = async () => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await axios.put(
+      "http://localhost:5000/api/user/update",
+      {
+        name: fullName,
+        email: email
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    alert("Profile updated successfully");
+
+  } catch (error) {
+    console.error("Update failed", error);
+    alert("Failed to update profile");
+  }
+};
+
   const Toggle = ({ enabled, onChange }) => (
     <button
       onClick={() => onChange(!enabled)}
@@ -85,7 +110,7 @@ export default function SettingsPage() {
           <section>
             <div className="mb-4">
               <h2 className="text-[1.15rem] font-bold text-[#314339]">Profile Details</h2>
-              <p className="text-[#889B8F] text-[12px] mt-0.5">Update your personal details and focus preferences.</p>
+              <p className="text-[#889B8F] text-[12px] mt-0.5">Edit your personal details.</p>
             </div>
             <div className="bg-white rounded-[1.5rem] p-5 shadow-[0_6px_24px_rgb(0,0,0,0.03)] flex flex-col gap-4">
               {/* Full Name */}
@@ -111,16 +136,11 @@ export default function SettingsPage() {
                 />
               </div>
               {/* Focus Preferences label */}
-              <div>
-                <label className="block text-[12px] font-semibold text-[#6B8E73] mb-0.5 ml-1">Focus Preferences</label>
-                <p className="text-[#A5B5AA] text-[11px] ml-1">Your workspace is personalised based on your onboarding answers.</p>
-              </div>
-              {/* Edit Preferences Button */}
               <button
-                onClick={() => navigate('/setup/1')}
-                className="mx-auto bg-[#6B8E73] text-white px-8 py-3 rounded-full font-bold text-[14px] shadow-[0_8px_25px_rgb(107,142,115,0.35)] hover:bg-[#5A7A61] transition-colors cursor-pointer"
+                onClick={handleUpdate}
+                className="mx-auto mt-2 bg-[#6B8E73] text-white px-8 py-3 rounded-full font-bold text-[14px] shadow-[0_8px_25px_rgb(107,142,115,0.35)] hover:bg-[#5A7A61] transition-colors cursor-pointer"
               >
-                Edit Preferences
+                Update Changes
               </button>
             </div>
           </section>

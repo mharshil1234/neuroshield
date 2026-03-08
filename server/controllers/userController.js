@@ -60,3 +60,23 @@ export const redeemExp = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const updateUser = async (req, res) => {
+  try {
+    const userId = req.user.id; // comes from auth middleware
+
+    const { name, email } = req.body;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { name, email },
+      { new: true }
+    );
+
+    res.json(user);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to update user" });
+  }
+};
