@@ -1,12 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Home, Calendar, BarChart2, Settings, Sparkles } from 'lucide-react';
+import { Shield, Home, Calendar, BarChart2, Settings, Sparkles, X, Gift, Loader2 } from 'lucide-react';
 import axios from "axios";
 
 export default function CompassPage() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
+
+  // Redeem modal state
+  const [showRedeemModal, setShowRedeemModal] = useState(false);
+  const [redeemAmount, setRedeemAmount] = useState(50);
+  const [suggestedActivity, setSuggestedActivity] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isRedeeming, setIsRedeeming] = useState(false);
+  const [redeemSuccess, setRedeemSuccess] = useState(false);
 
   useEffect(() => {
 
@@ -36,6 +44,70 @@ export default function CompassPage() {
     fetchUser();
 
   }, []);
+
+  // Generate fun activity via Gemini Nano
+  const generateActivity = async () => {
+    setIsGenerating(true);
+    setSuggestedActivity('');
+    try {
+      if (window.ai && window.ai.languageModel) {
+        const session = await window.ai.languageModel.create();
+        const prompt = `You are a wellness coach. A user just earned ${redeemAmount} EXP points from focused work and wants to redeem them for a fun rest activity.
+
+Based on the points spent:
+- 50 points = quick micro-break (1-2 mins)
+- 100 points = short break (5 mins)
+- 150 points = medium break (10 mins)
+- 200+ points = longer reward activity (15+ mins)
+
+Suggest ONE specific, creative, fun rest activity matching ${redeemAmount} points. Be warm, playful, and specific. Include an emoji. Keep it to 2-3 sentences max. Do NOT mention points or numbers.`;
+        const result = await session.prompt(prompt);
+        session.destroy();
+        setSuggestedActivity(result.trim());
+      } else {
+        throw new Error('Gemini Nano unavailable');
+      }
+    } catch (err) {
+      console.warn('Gemini Nano unavailable, using fallback:', err.message);
+      const fallbacks = {
+        50: "🧘 Take a deep breath and do a 1-minute desk stretch. Roll your shoulders, stretch your neck, and wiggle your fingers!",
+        100: "☕ Make yourself a nice cup of tea or coffee. Savour it slowly while looking out the window — you've earned this moment.",
+        150: "🎵 Put on your favourite song, close your eyes, and just vibe for a few minutes. Maybe even dance a little — nobody's watching!",
+        200: "🌳 Step outside for a 15-minute walk. No phone, no agenda — just fresh air and your thoughts. Come back refreshed!",
+        250: "🎨 Grab a pen and doodle whatever comes to mind for 15 minutes. Abstract shapes, silly faces, dream landscapes — let your brain play!"
+      };
+      const closest = Object.keys(fallbacks).reduce((prev, curr) => 
+        Math.abs(curr - redeemAmount) < Math.abs(prev - redeemAmount) ? curr : prev
+      );
+      setSuggestedActivity(fallbacks[closest]);
+    }
+    setIsGenerating(false);
+  };
+
+  // Confirm redeem — deduct points via API
+  const confirmRedeem = async () => {
+    setIsRedeeming(true);
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.post(
+        'http://localhost:5000/api/user/redeem',
+        { amount: redeemAmount },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setUser(prev => ({ ...prev, exp: res.data.exp }));
+      setRedeemSuccess(true);
+    } catch (err) {
+      console.error('Redeem failed:', err);
+    }
+    setIsRedeeming(false);
+  };
+
+  const closeModal = () => {
+    setShowRedeemModal(false);
+    setSuggestedActivity('');
+    setRedeemSuccess(false);
+    setRedeemAmount(50);
+  };
 
   // In production these would come from context/state/AI analysis
   const brainBattery = 35; // percentage
@@ -98,7 +170,12 @@ export default function CompassPage() {
               <span className="text-[10px] text-[#889B8F] font-medium leading-tight">Points Available</span>
               <span className="text-[14px] font-bold text-[#314339] leading-tight">{user?.exp} EXP</span>
             </div>
-            <button className="text-[11px] font-bold text-[#6B8E73] hover:text-[#5A7A61] transition-colors cursor-pointer ml-1">
+            <button
+              onClick={() => user?.exp > 0 && setShowRedeemModal(true)}
+              className={`text-[11px] font-bold transition-colors cursor-pointer ml-1 ${
+                user?.exp > 0 ? 'text-[#6B8E73] hover:text-[#5A7A61]' : 'text-[#BAC6BE] cursor-not-allowed'
+              }`}
+            >
               Redeem
             </button>
           </div>
@@ -143,6 +220,131 @@ export default function CompassPage() {
         </div>
 
       </main>
+
+      {/* Redeem Modal */}
+      {showRedeemModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center">
+          {/* Backdrop */}
+          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" onClick={closeModal} />
+          
+          {/* Modal */}
+          <div className="relative bg-white rounded-[2rem] w-full max-w-[440px] mx-4 p-7 shadow-[0_20px_60px_rgb(0,0,0,0.15)] animate-in fade-in zoom-in-95 duration-200">
+            {/* Close */}
+            <button onClick={closeModal} className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#F4F6F4] flex items-center justify-center text-[#889B8F] hover:bg-[#E5ECE5] transition-colors cursor-pointer">
+              <X className="w-4 h-4" />
+            </button>
+
+            {!redeemSuccess ? (
+              <>
+                {/* Header */}
+                <div className="flex items-center gap-3 mb-5">
+                  <div className="w-11 h-11 rounded-full bg-[#EFF5F0] flex items-center justify-center">
+                    <Gift className="w-5 h-5 text-[#6B8E73]" />
+                  </div>
+                  <div>
+                    <h2 className="text-[1.1rem] font-bold text-[#314339]">Redeem Your EXP</h2>
+                    <p className="text-[12px] text-[#889B8F]">{user?.exp || 0} points available</p>
+                  </div>
+                </div>
+
+                {/* Amount Picker */}
+                <div className="bg-[#F4F6F4] rounded-2xl p-5 mb-5">
+                  <label className="block text-[12px] font-semibold text-[#6B8E73] mb-3">Points to redeem</label>
+                  <div className="flex items-center justify-between">
+                    <button
+                      onClick={() => setRedeemAmount(Math.max(50, redeemAmount - 50))}
+                      className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-[#6B8E73] font-bold text-[18px] shadow-sm hover:bg-[#E5ECE5] transition-colors cursor-pointer"
+                    >−</button>
+                    <div className="text-center">
+                      <span className="text-[2rem] font-bold text-[#314339]">{redeemAmount}</span>
+                      <span className="text-[13px] text-[#889B8F] font-medium ml-1">EXP</span>
+                    </div>
+                    <button
+                      onClick={() => setRedeemAmount(Math.min(user?.exp || 0, redeemAmount + 50))}
+                      className="w-9 h-9 rounded-full bg-white flex items-center justify-center text-[#6B8E73] font-bold text-[18px] shadow-sm hover:bg-[#E5ECE5] transition-colors cursor-pointer"
+                    >+</button>
+                  </div>
+                  <div className="flex justify-between mt-3 text-[10px] text-[#A5B5AA] font-medium">
+                    <span>Micro-break</span>
+                    <span>Full reward</span>
+                  </div>
+                  {/* Visual range bar */}
+                  <div className="w-full h-1.5 bg-[#D7E4D9] rounded-full mt-2 overflow-hidden">
+                    <div
+                      className="h-full bg-[#6B8E73] rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min(100, (redeemAmount / (user?.exp || 1)) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+
+                {/* Generate Button */}
+                {!suggestedActivity && (
+                  <button
+                    onClick={generateActivity}
+                    disabled={isGenerating}
+                    className="w-full bg-[#6B8E73] text-white py-3.5 rounded-full font-bold text-[14px] shadow-[0_8px_25px_rgb(107,142,115,0.35)] hover:bg-[#5A7A61] transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    {isGenerating ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Thinking of something fun...</>
+                    ) : (
+                      <><Sparkles className="w-4 h-4" /> Suggest a Fun Activity</>
+                    )}
+                  </button>
+                )}
+
+                {/* AI Suggestion */}
+                {suggestedActivity && (
+                  <div className="mb-5">
+                    <div className="bg-[#EFF5F0] rounded-2xl p-5 border border-[#D7E4D9]">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Sparkles className="w-4 h-4 text-[#6B8E73]" />
+                        <span className="text-[11px] font-bold text-[#6B8E73] uppercase tracking-wider">AI Suggested Activity</span>
+                      </div>
+                      <p className="text-[14px] text-[#314339] leading-relaxed">{suggestedActivity}</p>
+                    </div>
+
+                    <div className="flex gap-3 mt-4">
+                      <button
+                        onClick={generateActivity}
+                        disabled={isGenerating}
+                        className="flex-1 border border-[#D2E2D5] rounded-full py-3 text-[13px] font-semibold text-[#6B8E73] hover:bg-[#F4F6F4] transition-colors cursor-pointer disabled:opacity-50"
+                      >
+                        {isGenerating ? 'Thinking...' : 'Try Another'}
+                      </button>
+                      <button
+                        onClick={confirmRedeem}
+                        disabled={isRedeeming}
+                        className="flex-1 bg-[#6B8E73] text-white rounded-full py-3 text-[13px] font-bold shadow-[0_8px_25px_rgb(107,142,115,0.35)] hover:bg-[#5A7A61] transition-colors cursor-pointer disabled:opacity-60 flex items-center justify-center gap-1.5"
+                      >
+                        {isRedeeming ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                        Confirm & Redeem
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              /* Success State */
+              <div className="text-center py-4">
+                <div className="w-16 h-16 rounded-full bg-[#EFF5F0] flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl">🎉</span>
+                </div>
+                <h2 className="text-[1.25rem] font-bold text-[#314339] mb-2">Points Redeemed!</h2>
+                <p className="text-[14px] text-[#889B8F] mb-4">You spent {redeemAmount} EXP. Enjoy your break!</p>
+                <div className="bg-[#EFF5F0] rounded-2xl p-5 mb-5 text-left border border-[#D7E4D9]">
+                  <p className="text-[14px] text-[#314339] leading-relaxed">{suggestedActivity}</p>
+                </div>
+                <button
+                  onClick={closeModal}
+                  className="bg-[#6B8E73] text-white px-8 py-3 rounded-full font-bold text-[14px] shadow-[0_8px_25px_rgb(107,142,115,0.35)] hover:bg-[#5A7A61] transition-colors cursor-pointer"
+                >
+                  Got it!
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Bottom Navigation */}
       <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-white rounded-full px-6 py-3 flex items-center justify-center gap-6 shadow-[0_15px_50px_rgb(107,142,115,0.1)] z-50">
