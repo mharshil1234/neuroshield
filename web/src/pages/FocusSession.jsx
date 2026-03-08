@@ -199,7 +199,7 @@ export default function FocusSession() {
             {/* Pebble Working Animation */}
             <div className="mb-6">
               <div className="w-[160px] h-[160px] rounded-[24px] bg-[#D0E0D2] flex items-center justify-center shadow-[0_8px_30px_rgb(116,150,122,0.15)] overflow-hidden">
-                <img src="/pebble-working.png" alt="Pebble working" className="w-[140px] h-[140px] object-contain" />
+                <img src="/pebble-typing.webp.webp" alt="Pebble working" className="w-[150px] h-[150px] object-cover mix-blend-screen" />
               </div>
             </div>
 
