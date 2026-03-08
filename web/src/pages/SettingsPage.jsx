@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Shield, Home, Calendar, BarChart2, Settings, Moon, Palette, Sparkles, Clock, Coffee, Eye, LogOut } from 'lucide-react';
+import { Shield, Home, Calendar, BarChart2, Settings, Moon, Palette, Sparkles, Clock, Coffee, LogOut } from 'lucide-react';
 import axios from 'axios';
 
 export default function SettingsPage() {
@@ -15,7 +15,7 @@ export default function SettingsPage() {
   const [darkMode, setDarkMode] = useState(true);
   const [softColourMode, setSoftColourMode] = useState(true);
   const [reduceAnimations, setReduceAnimations] = useState(true);
-  const [showFocusBuddy, setShowFocusBuddy] = useState(false);
+
 
   // Slider states
   const [focusLength, setFocusLength] = useState(25);
@@ -233,27 +233,7 @@ export default function SettingsPage() {
             </div>
           </section>
 
-          {/* ── Interface ── */}
-          <section>
-            <div className="mb-4">
-              <h2 className="text-[1.15rem] font-bold text-[#314339]">Interface</h2>
-              <p className="text-[#889B8F] text-[12px] mt-0.5">Control how simple or guided your workspace feels.</p>
-            </div>
-            <div className="bg-white rounded-[1.5rem] p-5 shadow-[0_6px_24px_rgb(0,0,0,0.03)]">
-              <div className="flex items-center justify-between py-3 px-1">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-[#EFF5F0] flex items-center justify-center">
-                    <Eye className="w-[18px] h-[18px] text-[#6B8E73]" />
-                  </div>
-                  <div>
-                    <p className="text-[14px] font-semibold text-[#314339]">Show Focus Buddy</p>
-                    <p className="text-[11px] text-[#A5B5AA]">Displays your focus companion during sessions for support.</p>
-                  </div>
-                </div>
-                <Toggle enabled={showFocusBuddy} onChange={setShowFocusBuddy} />
-              </div>
-            </div>
-          </section>
+
 
           {/* ── Log Out ── */}
           <button
