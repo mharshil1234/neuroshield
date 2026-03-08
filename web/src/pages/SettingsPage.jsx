@@ -31,6 +31,8 @@ export default function SettingsPage() {
         setUser(res.data);
         setFullName(res.data.name || '');
         setEmail(res.data.email || '');
+        setFocusLength(res.data.focusSessionLength || 25);
+        setBreakLength(res.data.breakLength || 5);
       } catch (error) {
         console.error('Failed to fetch user', error);
       }
@@ -67,6 +69,29 @@ export default function SettingsPage() {
     alert("Failed to update profile");
   }
 };
+
+  const updateFocusSettings = async (nFocus, nBreak) => {
+    try {
+      console.log("Updating frontend");
+      const token = localStorage.getItem("token");
+
+      await axios.put(
+        "http://localhost:5000/api/user/focus-settings",
+        {
+          focusSessionLength: nFocus,
+          breakLength: nBreak
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+    } catch (error) {
+      console.error("Failed to update focus settings", error);
+    }
+  };
 
   const Toggle = ({ enabled, onChange }) => (
     <button
@@ -216,12 +241,22 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setFocusLength(Math.max(5, focusLength - 5))}
+                    onClick={() => {
+                        const neww = Math.max(5, focusLength - 5);
+                        setFocusLength(neww);
+                        updateFocusSettings(neww, breakLength);
+                      }
+                    }
                     className="w-7 h-7 rounded-full bg-[#EFF5F0] flex items-center justify-center text-[#6B8E73] font-bold text-[16px] hover:bg-[#D7E4D9] transition-colors cursor-pointer"
                   >−</button>
                   <span className="text-[14px] font-bold text-[#314339] w-10 text-center">{focusLength}m</span>
                   <button
-                    onClick={() => setFocusLength(Math.min(90, focusLength + 5))}
+                    onClick={() => {
+                      const neww = Math.min(90, focusLength + 5);
+                        setFocusLength(neww);
+                        updateFocusSettings(neww, breakLength);
+                      }
+                    }
                     className="w-7 h-7 rounded-full bg-[#EFF5F0] flex items-center justify-center text-[#6B8E73] font-bold text-[16px] hover:bg-[#D7E4D9] transition-colors cursor-pointer"
                   >+</button>
                 </div>
@@ -240,12 +275,22 @@ export default function SettingsPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <button
-                    onClick={() => setBreakLength(Math.max(1, breakLength - 1))}
+                    onClick={() => {
+                      const neww = Math.max(1, breakLength - 1);
+                        setBreakLength(neww);
+                        updateFocusSettings(focusLength, neww);
+                      }
+                    }
                     className="w-7 h-7 rounded-full bg-[#EFF5F0] flex items-center justify-center text-[#6B8E73] font-bold text-[16px] hover:bg-[#D7E4D9] transition-colors cursor-pointer"
                   >−</button>
                   <span className="text-[14px] font-bold text-[#314339] w-10 text-center">{breakLength}m</span>
                   <button
-                    onClick={() => setBreakLength(Math.min(30, breakLength + 1))}
+                    onClick={() => {
+                      const neww = Math.min(30, breakLength + 1);
+                        setBreakLength(neww);
+                        updateFocusSettings(focusLength, neww);
+                      }
+                    }
                     className="w-7 h-7 rounded-full bg-[#EFF5F0] flex items-center justify-center text-[#6B8E73] font-bold text-[16px] hover:bg-[#D7E4D9] transition-colors cursor-pointer"
                   >+</button>
                 </div>
