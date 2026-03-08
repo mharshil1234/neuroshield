@@ -12,9 +12,9 @@ export default function SettingsPage() {
   const [email, setEmail] = useState('');
 
   // Toggle states
-  const [darkMode, setDarkMode] = useState(true);
-  const [softColourMode, setSoftColourMode] = useState(true);
-  const [reduceAnimations, setReduceAnimations] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
+  const [softColourMode, setSoftColourMode] = useState(false);
+  const [reduceAnimations, setReduceAnimations] = useState(false);
 
 
   // Slider states
