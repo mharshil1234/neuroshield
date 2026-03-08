@@ -7,16 +7,18 @@ export default function ProgressJourney() {
   const navigate = useNavigate();
 
   const [user, setUser] = useState(null);
+  const [journeySteps, setJourneySteps] = useState([]);
 
   useEffect(() => {
 
-  const fetchUser = async () => {
+  const fetchData = async () => {
 
     try {
 
       const token = localStorage.getItem("token");
 
-      const res = await axios.get(
+      // Get user
+      const userRes = await axios.get(
         "http://localhost:5000/api/user/me",
         {
           headers: {
@@ -25,28 +27,53 @@ export default function ProgressJourney() {
         }
       );
 
-      setUser(res.data);
+      setUser(userRes.data);
+
+      // Get tasks belonging to this user
+      const taskRes = await axios.get(
+        "http://localhost:5000/api/tasks",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      const tasks = taskRes.data;
+
+      const today = new Date().toDateString();
+
+      const todayTasks = tasks
+        .filter(task => new Date(task.createdAt).toDateString() === today)
+        .map(task => {
+
+          const totalSteps = task.steps.length;
+          const completedSteps = task.steps.filter(step => step.completed).length;
+
+          let status = completedSteps === totalSteps ? "completed" : "in-progress";
+
+          return {
+            id: task._id,
+            title: task.taskName,
+            steps: task.steps.map(s => s.content),
+            startStep: Math.max(task.steps.findIndex(s => !s.completed), 0),
+            status,
+            progress: `${completedSteps}/${totalSteps} steps`
+          };
+
+        });
+
+      setJourneySteps(todayTasks);
 
     } catch (error) {
-      console.error("Failed to fetch user", error);
+      console.error("Failed to fetch data", error);
     }
 
   };
 
-  fetchUser();
+  fetchData();
 
-  }, []);
-
-
-  // Sample journey data — in production, this would come from state/context/API
-  const journeySteps = [
-    { title: 'Review Emails', status: 'completed' },
-    { title: 'Set Daily Intention', status: 'completed' },
-    { title: 'Drink Water', status: 'completed' },
-    { title: 'Project Immersion', status: 'in-progress', timeRemaining: '45 mins remaining' },
-    { title: 'Review Emails', status: 'upcoming' },
-    { title: 'Quick Stretch', status: 'upcoming' },
-  ];
+}, []);
 
   return (
     <div className="min-h-screen w-full bg-[#E5ECE5] flex flex-col items-center relative font-sans overflow-y-auto">
@@ -80,21 +107,37 @@ export default function ProgressJourney() {
             <h1 className="text-[1.75rem] font-bold text-[#314339] tracking-tight leading-tight">Progress Journey</h1>
           </div>
         </div>
+  
+        {journeySteps.length === 0 && (
+        <p className="text-[#6B8E73] text-sm">No tasks for today yet 🌱</p>
+        )}
 
         {/* Timeline */}
         <div className="w-full max-w-[520px] relative">
           {/* Vertical Line */}
           <div className="absolute left-[23px] top-[28px] bottom-[28px] w-[2px] bg-[#C8D6CB]" />
-
           {journeySteps.map((step, index) => {
             const isCompleted = step.status === 'completed';
             const isInProgress = step.status === 'in-progress';
-            const isUpcoming = step.status === 'upcoming';
 
             return (
               <div
                 key={index}
-                className={`relative flex items-center gap-4 mb-4 ${isUpcoming ? 'opacity-35' : ''}`}
+                onClick={() => {
+                  if (!isCompleted) {
+                    navigate('/focus', {
+                      state: {
+                        taskId: step.id,
+                        taskName: step.title,
+                        steps: step.steps,
+                        startStep: step.startStep
+                      }
+                    });
+                  }
+                }}
+                className={`relative flex items-center gap-4 mb-4 
+                  ${!isCompleted ? 'cursor-pointer hover:scale-[1.02]' : ''}
+                `}
               >
                 {/* Icon */}
                 <div className="relative z-10 shrink-0">
@@ -106,11 +149,6 @@ export default function ProgressJourney() {
                   {isInProgress && (
                     <div className="w-[48px] h-[48px] rounded-full bg-[#4D6251] flex items-center justify-center shadow-md">
                       <PlayCircle className="w-6 h-6 text-white" />
-                    </div>
-                  )}
-                  {isUpcoming && (
-                    <div className="w-[48px] h-[48px] rounded-full border-2 border-[#C8D6CB] bg-white flex items-center justify-center">
-                      <CheckCircle2 className="w-5 h-5 text-[#C8D6CB]" />
                     </div>
                   )}
                 </div>
@@ -152,7 +190,7 @@ export default function ProgressJourney() {
                         : 'text-[#C8D6CB]'
                     }`}
                   >
-                    {isCompleted ? 'COMPLETED' : isInProgress ? 'IN PROGRESS' : 'COMPLETED'}
+                    {isCompleted ? 'COMPLETED' : 'IN PROGRESS'}
                   </span>
                 </div>
               </div>

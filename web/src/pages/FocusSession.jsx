@@ -6,8 +6,7 @@ import axios from "axios";
 export default function FocusSession() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { steps = [], taskName = '', taskId = null } = location.state || {};
-  const { startStep = 0 } = location.state || {};
+  const { steps = [], taskName = '', taskId = null, startStep = 0 } = location.state || {};
   const [currentStep, setCurrentStep] = useState(startStep);
   const [completed, setCompleted] = useState(false);
   const [isBuddyActive, setIsBuddyActive] = useState(false);
