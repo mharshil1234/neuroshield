@@ -32,7 +32,12 @@ const userSchema = new mongoose.Schema({
     struggles: {
       type: [String],
       default: []
-    }
+    },
+  },
+
+  exp: {
+    type: Number,
+    default: 0
   },
 
   createdAt: {

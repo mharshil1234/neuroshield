@@ -1,4 +1,5 @@
 import Task from "../models/Task.js";
+import User from "../models/User.js";
 
 export const createTask = async (req, res) => {
 
@@ -35,9 +36,19 @@ export const updateStep = async (req, res) => {
 
     const task = await Task.findById(taskId);
 
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
     task.steps[stepIndex].completed = true;
 
     await task.save();
+
+    // increase EXP by 50
+    await User.findByIdAndUpdate(
+      req.user.id,
+      { $inc: { exp: 50 } }
+    );
 
     res.json(task);
 
