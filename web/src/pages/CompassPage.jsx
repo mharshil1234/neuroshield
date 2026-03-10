@@ -135,84 +135,59 @@ Suggest ONE specific, creative, fun rest activity matching ${redeemAmount} point
       <main className="flex-1 w-full flex flex-col items-center px-4 pt-28 pb-32 z-10">
 
         {/* Title Row */}
-        <div className="w-full max-w-[620px] flex items-start justify-between mb-2">
-          <div>
-            <h1 className="text-[1.75rem] font-bold text-[#314339] tracking-tight leading-tight">Your Compass</h1>
-            <div className="mt-1.5">
-              <span className="text-[10px] font-bold text-[#6B8E73] uppercase tracking-[0.12em] block">Total Focus Bank</span>
-              <div className="flex items-center gap-1.5 mt-1">
-                <Shield className="w-3.5 h-3.5 text-[#6B8E73]" fill="currentColor" fillOpacity={0.5} />
-                <span className="text-[11px] text-[#829E8C] font-medium ml-1">
-                  Every day counts. No streaks to break.
-                </span>
-              </div>
-            </div>
-          </div>
+        {/* Compass Title */}
+          <h1 className="text-[1.75rem] font-bold text-[#314339] tracking-tight mb-6">
+            Your Compass
+          </h1>
 
-          {/* EXP Badge */}
-          <div className="bg-white rounded-full px-4 py-2.5 flex items-center gap-2.5 shadow-[0_4px_16px_rgb(0,0,0,0.04)] shrink-0">
-            <Sparkles className="w-4 h-4 text-[#6B8E73]" />
-            <div className="flex flex-col">
-              <span className="text-[10px] text-[#889B8F] font-medium leading-tight">Points Available</span>
-              <span className="text-[14px] font-bold text-[#314339] leading-tight">{user?.exp || 0} EXP</span>
-            </div>
+          {/* EXP Center Card */}
+          <div className="w-full max-w-[420px] bg-white rounded-[1.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center text-center">
+
+            <Sparkles className="w-6 h-6 text-[#6B8E73] mb-2" />
+
+            <span className="text-[12px] text-[#889B8F] font-medium">
+              Points Available
+            </span>
+
+            <span className="text-[28px] font-bold text-[#314339] mt-1">
+              {user?.exp || 0} EXP
+            </span>
+
             <button
               onClick={() => user?.exp > 0 && setShowRedeemModal(true)}
-              className={`text-[11px] font-bold transition-colors cursor-pointer ml-1 ${
-                user?.exp > 0 ? 'text-[#6B8E73] hover:text-[#5A7A61]' : 'text-[#BAC6BE] cursor-not-allowed'
-              }`}
+              className="mt-4 bg-[#6B8E73] text-white px-6 py-2.5 rounded-full text-[13px] font-bold hover:bg-[#5A7A61] hover:cursor-pointer transition-colors"
             >
-              Redeem
+              Redeem Points
             </button>
-          </div>
-        </div>
 
-        {/* Rhythm Insights Card (Replaces Pattern Noticed) */}
-        <div className="w-full max-w-[620px] bg-white rounded-[1.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-5 mt-6 border-l-4 border-[#A3BFA9]">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-8 h-8 rounded-full bg-[#E5ECE5] flex items-center justify-center">
-              <Waves className="w-[18px] h-[18px] text-[#6B8E73]" />
-            </div>
-            <h2 className="text-[16px] font-bold text-[#314339]">Your Natural Rhythm</h2>
-          </div>
-          <p className="text-[14px] text-[#5A6B5F] leading-relaxed mb-4">
-            Your Peak Focus Hour is <strong>{peakFocusHour}</strong>! Your evening energy naturally winds down, making it a great time for easy tasks. We've adjusted your suggestions to match your flow.
-          </p>
-        </div>
-
-        {/* Capacity & Recharge Card (Replaces Brain Battery) */}
-        <div className="w-full max-w-[620px] bg-white rounded-[1.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] mb-5">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-[#E5ECE5] flex items-center justify-center">
-              <Heart className="w-[18px] h-[18px] text-[#6B8E73]" fill="currentColor" fillOpacity={0.2} />
-            </div>
-            <h2 className="text-[16px] font-bold text-[#314339]">Capacity & Recharge</h2>
           </div>
 
-          <div className="bg-[#F8FAF8] rounded-xl p-4 mb-4 border border-[#E5ECE5]">
-            <div className="flex items-start gap-3">
-              <Zap className="w-5 h-5 text-[#E3A336] shrink-0 mt-0.5" fill="currentColor" fillOpacity={0.3} />
-              <div>
-                <h3 className="text-[14px] font-bold text-[#314339] mb-1">Low-Capacity Day Routine</h3>
-                <p className="text-[13px] text-[#6A7C70] leading-relaxed">
-                  It looks like today is a bit lower energy. That is completely normal! We recommend keeping tasks under 15 minutes today, or taking the day off entirely to recharge.
-                </p>
-              </div>
-            </div>
-          </div>
+          <div className="w-full max-w-[420px] bg-white rounded-[1.5rem] p-6 shadow-[0_8px_30px_rgb(0,0,0,0.04)] flex flex-col items-center text-center mt-6">
 
-          <div className="bg-[#F8FAF8] rounded-xl p-4 border border-[#E5ECE5]">
-            <div className="flex items-start gap-3">
-              <Coffee className="w-5 h-5 text-[#6B8E73] shrink-0 mt-0.5" />
-              <div>
-                <h3 className="text-[14px] font-bold text-[#314339] mb-1">Recharge Rate: {rechargeBreaks} Breaks</h3>
-                <p className="text-[13px] text-[#6A7C70] leading-relaxed">
-                  You took {rechargeBreaks} Brain Rest breaks today, perfectly pacing yourself to match your output. Great job honoring your limits!
-                </p>
-              </div>
-            </div>
+            <Heart className="w-6 h-6 text-[#6B8E73] mb-2" />
+
+            <span className="text-[12px] text-[#889B8F] font-medium">
+              Need Support?
+            </span>
+
+            <span className="text-[18px] font-bold text-[#314339] mt-1">
+              Government Mental Health Resources
+            </span>
+
+            <p className="text-[13px] text-[#6A7C70] mt-2">
+              If you're feeling overwhelmed, you can explore official mental health support resources provided by the Government of India.
+            </p>
+
+            <a
+              href="https://telemanas.mohfw.gov.in/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-4 bg-[#6B8E73] text-white px-6 py-2.5 rounded-full text-[13px] font-bold hover:bg-[#5A7A61] transition-colors"
+            >
+              Visit Tele-MANAS Portal
+            </a>
+
           </div>
-        </div>
 
       </main>
 

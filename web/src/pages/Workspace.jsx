@@ -6,7 +6,7 @@ import axios from "axios";
 
 export default function Workspace() {
 
-  /*
+  
   useEffect(() => {
   
     const token = localStorage.getItem("token");
@@ -16,7 +16,7 @@ export default function Workspace() {
     }
   
   }, []);
-  */
+  
 
   const [user, setUser] = useState(null);
   const [resumeTask, setResumeTask] = useState(null);
@@ -271,17 +271,6 @@ export default function Workspace() {
 
   </div>
 )}
-
-        {/* Progress Section */}
-        <div className="w-full max-w-[500px] mx-auto">
-          <div className="flex items-center justify-between text-[11px] font-bold text-[#6B8E73] mb-3 px-1 opacity-90">
-            <span>Daily Flow Progress</span>
-            <span>65%</span>
-          </div>
-          <div className="w-full h-3 bg-[#CCDACF] rounded-full overflow-hidden">
-            <div className="h-full bg-[#829E8C] rounded-full" style={{ width: '65%' }}></div>
-          </div>
-        </div>
 
       </main>
 
